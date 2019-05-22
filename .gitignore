@@ -1,0 +1,11 @@
+.project
+.pydevproject
+.idea
+.env*
+.tox
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+docs/_build/
+
