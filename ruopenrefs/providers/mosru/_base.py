@@ -42,7 +42,7 @@ class MosOpenDataProvider(HttpDataProvider):
         skip = skip or 0
         top = top or self.batch_size
 
-        if top and limit < top:
+        if top and limit and limit < top:
             top = limit
 
         def get_data(top, skip):
@@ -105,6 +105,39 @@ class MosOpenDataRefBase(ReferenceBase):
     def dump(self) -> list:
         """Собирает и возвращает все данные справочника."""
         return list(self.iter_items())
+
+    def export(self, *, fmt: str = 'tuples') -> str:
+        """Экспортирует данные справочника в указанный текстовый формат.
+
+        :param fmt: Поддерживаемые форматы:
+            * tuples - список с кортежами (язык Python)
+            * dicts - список словарей (язык Python)
+
+        """
+        lines = []
+
+        dumped = self.dump()
+
+        lines.append('items = [')
+
+        def to_tuples(item): return str(tuple(item))
+
+        def to_dicts(item): return str(dict(item._asdict()))
+
+        format_func = {
+
+            'tuples': to_tuples,
+            'dicts': to_dicts,
+
+        }.get(fmt, to_tuples)
+
+        lines.extend(format_func(item) + ',' for item in dumped)
+
+        lines.append(']')
+
+        lines = '\n'.join(lines)
+
+        return lines
 
     def iter_items(self):
         """Генератор. Позволяет проходить по элементам справочника один за одним."""

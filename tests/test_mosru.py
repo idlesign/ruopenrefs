@@ -8,6 +8,13 @@ provider = MosOpenDataProvider()
 provider.items_limit = ITEMS_LIMIT
 
 
+def test_export():
+
+    ref = OksmRef(provider=provider)
+    data = ref.export()
+    assert '),' in data
+
+
 def test_oksm():
 
     ref = OksmRef(provider=provider)
